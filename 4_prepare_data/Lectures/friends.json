@@ -1,0 +1,8 @@
+[
+    {"ID":1, "Name": "Chandler", "Status": "Joking" },
+    {"ID":2, "Name": "Phoebe", "Status": "Singing" },
+    {"ID":3, "Name": "Monica", "Status": "Cleaning" },
+    {"ID":4, "Name": "Ross", "Status": "Whining" },
+    {"ID":5, "Name": "Rachel", "Status": "Shopping" },
+    {"ID":6, "Name": "Joey", "Status": "Eating" }
+]
