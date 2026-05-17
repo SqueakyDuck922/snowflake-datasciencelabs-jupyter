@@ -1,0 +1,49 @@
+--I created this, I think to substitute for test data that was avaiable in the course 
+
+-- Create or replace the test table
+CREATE OR REPLACE TABLE CREDITRISK_DEMO.public.customer_churn_test (
+    CHURNED INT,
+    CUSTOMER_ID STRING,
+    SURNAME_MASKED STRING,
+    CREDIT_SCORE INT,
+    GEOGRAPHY STRING,
+    GENDER STRING,
+    AGE INT,
+    TENURE INT,
+    MILEAGE_POINTS FLOAT,
+    NUM_OF_PRODUCTS INT,
+    HAS_AIRLINE_CREDIT_CARD BOOLEAN,
+    IS_ACTIVE_MEMBER BOOLEAN,
+    ESTIMATED_SALARY INT
+);
+
+-- Populate with hundreds of rows of fake data
+INSERT INTO CREDITRISK_DEMO.public.customer_churn_test
+SELECT
+    UNIFORM(0, 2, RANDOM()) AS CHURNED,  -- 0 or 1
+    'CUST' || LPAD(SEQ4(), 5, '0') AS CUSTOMER_ID,
+    INITCAP(RANDSTR(5, RANDOM())) AS SURNAME_MASKED,  -- Random surname
+    UNIFORM(400, 850, RANDOM()) AS CREDIT_SCORE,  -- Credit score between 400-850
+    UPPER(GEOGRAPHY) AS GEOGRAPHY,
+    UPPER(GENDER) AS GENDER,
+    UNIFORM(18, 80, RANDOM()) AS AGE,  -- Age 18-80
+    UNIFORM(0, 10, RANDOM()) AS TENURE,  -- Tenure 0-10
+    ROUND(UNIFORM(0, 100000, RANDOM())::FLOAT, 2) AS MILEAGE_POINTS,  -- Mileage points 0-100000
+    UNIFORM(1, 4, RANDOM()) AS NUM_OF_PRODUCTS,  -- 1-3 products
+    IFF(UNIFORM(0, 2, RANDOM()) = 1, TRUE, FALSE) AS HAS_AIRLINE_CREDIT_CARD,
+    IFF(UNIFORM(0, 2, RANDOM()) = 1, TRUE, FALSE) AS IS_ACTIVE_MEMBER,
+    UNIFORM(30000, 150000, RANDOM()) AS ESTIMATED_SALARY  -- Salary 30k-150k
+FROM TABLE(GENERATOR(ROWCOUNT => 500))  -- Generates 500 rows
+,
+LATERAL (
+    SELECT
+        CASE UNIFORM(1, 4, RANDOM())
+            WHEN 1 THEN 'GERMANY'
+            WHEN 2 THEN 'FRANCE'
+            ELSE 'SPAIN'
+        END AS GEOGRAPHY,
+        CASE UNIFORM(1, 3, RANDOM())
+            WHEN 1 THEN 'MALE'
+            ELSE 'FEMALE'
+        END AS GENDER
+);
