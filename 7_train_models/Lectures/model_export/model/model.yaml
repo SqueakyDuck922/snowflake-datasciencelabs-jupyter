@@ -1,0 +1,109 @@
+creation_timestamp: '2026-05-27 16:41:57.243115'
+env:
+  artifact_repository_map: {}
+  conda: env/conda.yml
+  cuda_version: null
+  pip: env/requirements.txt
+  python_version: '3.12'
+  resource_constraint: {}
+  snowpark_ml_version: 1.40.0
+explainability:
+  algorithm: shap
+function_properties:
+  explain:
+    PARTITIONED: false
+metadata: null
+method_options: {}
+min_snowpark_ml_version: 1.0.12
+model_type: snowml
+models:
+  DIABETES_MODEL:
+    artifacts: {}
+    function_properties: {}
+    handler_version: '2023-12-01'
+    model_type: snowml
+    name: DIABETES_MODEL
+    options: {}
+    path: model.pkl
+name: DIABETES_MODEL
+runtimes:
+  cpu:
+    dependencies:
+      artifact_repository_map: {}
+      conda: runtimes/cpu/env/conda.yml
+      pip: runtimes/cpu/env/requirements.txt
+    imports: []
+    resource_constraint: {}
+signatures:
+  predict:
+    inputs:
+    - name: AGE
+      nullable: true
+      type: INT8
+    - name: SEX
+      nullable: true
+      type: STRING
+    - name: BMI
+      nullable: true
+      type: STRING
+    - name: BP
+      nullable: true
+      type: INT16
+    - name: BLOOD_SERUM1
+      nullable: true
+      type: INT16
+    - name: BLOOD_SERUM2
+      nullable: true
+      type: INT16
+    - name: BLOOD_SERUM3
+      nullable: true
+      type: INT8
+    - name: BLOOD_SERUM4
+      nullable: true
+      type: INT8
+    - name: BLOOD_SERUM5
+      nullable: true
+      type: INT8
+    - name: BLOOD_SERUM6
+      nullable: true
+      type: INT8
+    outputs:
+    - name: AGE
+      nullable: true
+      type: DOUBLE
+    - name: BMI
+      nullable: true
+      type: DOUBLE
+    - name: BP
+      nullable: true
+      type: INT16
+    - name: BLOOD_SERUM1
+      nullable: true
+      type: DOUBLE
+    - name: BLOOD_SERUM2
+      nullable: true
+      type: DOUBLE
+    - name: BLOOD_SERUM3
+      nullable: true
+      type: DOUBLE
+    - name: BLOOD_SERUM4
+      nullable: true
+      type: DOUBLE
+    - name: BLOOD_SERUM5
+      nullable: true
+      type: DOUBLE
+    - name: BLOOD_SERUM6
+      nullable: true
+      type: DOUBLE
+    - name: SEX_FEMALE
+      nullable: true
+      type: DOUBLE
+    - name: SEX_MALE
+      nullable: true
+      type: DOUBLE
+    - name: PREDICTION
+      nullable: true
+      type: FLOAT
+    params: []
+task: TABULAR_REGRESSION
+version: '2023-12-01'

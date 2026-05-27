@@ -1,0 +1,44 @@
+lineage_sources:
+- entity: "SELECT \n    \"AGE\", \n    upper(\"SEX\") AS \"SEX\", \n    \"BMI\", \n\
+    \    \"BP\", \n    \"BLOOD_SERUM1\", \n    \"BLOOD_SERUM2\", \n    \"BLOOD_SERUM3\"\
+    , \n    \"BLOOD_SERUM4\", \n    \"BLOOD_SERUM5\", \n    \"BLOOD_SERUM6\", \n \
+    \   \"TARGET\"\n FROM \"RKIRK_DB\".\"SNOWFLAKE_ML_PY_LESSON\".diabetes"
+  type: QUERY
+manifest_version: '1.0'
+methods:
+- handler: functions.predict.infer
+  inputs:
+  - name: AGE
+    type: BYTEINT
+  - name: SEX
+    type: STRING
+  - name: BMI
+    type: STRING
+  - name: BP
+    type: SMALLINT
+  - name: BLOOD_SERUM1
+    type: SMALLINT
+  - name: BLOOD_SERUM2
+    type: SMALLINT
+  - name: BLOOD_SERUM3
+    type: BYTEINT
+  - name: BLOOD_SERUM4
+    type: BYTEINT
+  - name: BLOOD_SERUM5
+    type: BYTEINT
+  - name: BLOOD_SERUM6
+    type: BYTEINT
+  name: PREDICT
+  outputs:
+  - type: OBJECT
+  runtime: python_runtime
+  type: FUNCTION
+  volatility: IMMUTABLE
+runtimes:
+  python_runtime:
+    dependencies:
+      conda: runtimes/python_runtime/env/conda.yml
+    imports:
+    - model/
+    language: PYTHON
+    version: '3.12'
