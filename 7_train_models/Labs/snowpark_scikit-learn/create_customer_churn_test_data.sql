@@ -39,11 +39,11 @@
 --   NUM_OF_PRODUCTS          INTEGER  - Number of products held. Range: 1-4.
 --                                       ~50% hold 1, ~46% hold 2, ~4% hold
 --                                       3 or 4.
---   HAS_AIRLINE_CREDIT_CARD  VARCHAR  - Whether customer holds an airline
---                                       credit card. 'Yes' or 'No'.
---                                       ~71% have one.
---   IS_ACTIVE_MEMBER         VARCHAR  - Whether customer is active.
---                                       'Yes' or 'No'. ~52% are active.
+--   HAS_AIRLINE_CREDIT_CARD  INTEGER  - Whether customer holds an airline
+--                                       credit card. 1=Yes, 0=No.
+--                                       ~71% have one (value = 1).
+--   IS_ACTIVE_MEMBER         INTEGER  - Whether customer is active.
+--                                       1=Yes, 0=No. ~52% are active.
 --   ESTIMATED_SALARY         FLOAT    - Estimated annual salary.
 --                                       Range: $11,000-$200,000.
 --   CHURNED                  INTEGER  - Target: 1=churned, 0=not churned.
@@ -96,8 +96,8 @@ CREATE OR REPLACE TABLE data_science_db.public.customer_churn (
     tenure                  INTEGER      NOT NULL,
     mileage_points          FLOAT        NOT NULL,
     num_of_products         INTEGER      NOT NULL,
-    has_airline_credit_card VARCHAR(3)   NOT NULL,
-    is_active_member        VARCHAR(3)   NOT NULL,
+    has_airline_credit_card INTEGER      NOT NULL,
+    is_active_member        INTEGER      NOT NULL,
     estimated_salary        FLOAT        NOT NULL,
     churned                 INTEGER      NOT NULL
 );
@@ -116,8 +116,8 @@ CREATE OR REPLACE TABLE data_science_db.public.customer_churn (
 --   - TENURE: uniform 0-10
 --   - MILEAGE_POINTS: 30% zero, 70% uniform 1-250000
 --   - NUM_OF_PRODUCTS: 50% one, 46% two, 3% three, 1% four
---   - HAS_AIRLINE_CREDIT_CARD: 'Yes' 71%, 'No' 29%
---   - IS_ACTIVE_MEMBER: 'Yes' 52%, 'No' 48%
+--   - HAS_AIRLINE_CREDIT_CARD: 1 (71%), 0 (29%)
+--   - IS_ACTIVE_MEMBER: 1 (52%), 0 (48%)
 --   - ESTIMATED_SALARY: uniform 11000-200000
 --   - CREDIT_SCORE: uniform 350-850
 --   - CHURNED: probability-based, driven by known churn factors:
@@ -199,12 +199,12 @@ categoricals AS (
                 END
         END AS num_of_products,
 
-        -- HAS_AIRLINE_CREDIT_CARD: 'Yes' 71%, 'No' 29%
-        CASE WHEN MOD(ABS(HASH(rownum, 7)), 100) < 71 THEN 'Yes' ELSE 'No' END
+        -- HAS_AIRLINE_CREDIT_CARD: 1=has card (71%), 0=no card (29%)
+        CASE WHEN MOD(ABS(HASH(rownum, 7)), 100) < 71 THEN 1 ELSE 0 END
             AS has_airline_credit_card,
 
-        -- IS_ACTIVE_MEMBER: 'Yes' 52%, 'No' 48%
-        CASE WHEN MOD(ABS(HASH(rownum, 8)), 100) < 52 THEN 'Yes' ELSE 'No' END
+        -- IS_ACTIVE_MEMBER: 1=active (52%), 0=inactive (48%)
+        CASE WHEN MOD(ABS(HASH(rownum, 8)), 100) < 52 THEN 1 ELSE 0 END
             AS is_active_member,
 
         -- ESTIMATED_SALARY: uniform 11000-200000
@@ -244,7 +244,7 @@ churn_calc AS (
             + CASE gender WHEN 'Female' THEN 0.08 ELSE 0.0 END
             + CASE WHEN age > 40 THEN 0.10 ELSE 0.0 END
             + CASE WHEN num_of_products >= 3 THEN 0.25 ELSE 0.0 END
-            + CASE is_active_member WHEN 'No' THEN 0.10 ELSE 0.0 END
+            + CASE WHEN is_active_member = 0 THEN 0.10 ELSE 0.0 END
         ) AS churn_prob
 
     FROM categoricals
@@ -346,7 +346,7 @@ FROM data_science_db.public.customer_churn
 GROUP BY num_of_products
 ORDER BY num_of_products;
 
--- Churn rate by active member status (inactive should churn more)
+-- Churn rate by active member status (0=inactive should churn more than 1=active)
 SELECT
     is_active_member,
     ROUND(AVG(churned) * 100, 1) AS churn_rate_pct
