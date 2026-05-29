@@ -25,7 +25,8 @@ from snowflake.connector import pandas_tools
 import pandas as pd
 import pickle
 
-config_dir = '/home/jovyan/.ssh'
+# config_dir = '/home/jovyan/.ssh'
+config_dir = '/Users/richardkirk/.ssh'
 configfile = config_dir + '/sf_config'
 
 
@@ -74,6 +75,7 @@ con = snowflake.connector.connect(**(props))
 
 # 3. Load new customer data
 
+#MyNote: script to geneate this data: 8_deploy_models/Labs/batch_scoring/python/create_new_customers_test_data.sql
 new_customers = pd.read_sql("select * from data_science_db.new_data.customers", con)
 
 
@@ -100,6 +102,7 @@ predictions_df = pd.DataFrame({"CUSTOMER_ID" : cust_ids,
 # 6. Save predictions
 
 cur = con.cursor()
+cur.execute("USE ROLE ACCOUNTADMIN;") #MyNote: I added this
 cur.execute(f"USE DATABASE {props['user']}_DB;")
 cur.execute('USE SCHEMA PUBLIC;')
 #cur.execute(f"USE WAREHOUSE {props['warehouse']};")
@@ -110,4 +113,6 @@ cur.execute('CREATE OR REPLACE TABLE \
                     PROB_1 FLOAT, \
                     PREDICTION INT)')
 
+# creates table here SELECT TOP 10 * FROM RKIRK_DB.PUBLIC.CHURN_PREDICTIONS_PYTHON
 pandas_tools.write_pandas(con, predictions_df, "CHURN_PREDICTIONS_PYTHON")
+

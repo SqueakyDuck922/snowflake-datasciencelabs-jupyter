@@ -21,8 +21,10 @@ from snowflake.connector import pandas_tools
 import pandas as pd
 import pickle
 
-config_dir = '/home/jovyan/.ssh'
+# config_dir = '/home/jovyan/.ssh'
+config_dir = '/Users/richardkirk/.ssh'
 configfile = config_dir + '/sf_config'
+
 
 # Get connection details
 
@@ -92,3 +94,6 @@ gnb_model = gnb.fit(X, y) # Using all available data
 f = open('batch_model_py.pkl', 'wb')
 pickle.dump(gnb_model, f)
 f.close()
+
+# MyNote: generates this file : /Users/richardkirk/SourceCode/snowflake-datasciencelabs-jupyter/batch_model_py.pkl
+
